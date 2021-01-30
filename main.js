@@ -15,7 +15,7 @@ ASSET_MANAGER.downloadAll(function () {
 	var start = new Start(gameEngine);
 
 	// download(start, 'tile.json', 'text/plain');
-	readTextFile("./tile.json", null)
+	readTextFile("./tile.json", console.log)
 
 
 });
