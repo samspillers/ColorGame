@@ -1,0 +1,20 @@
+{
+  "game": {
+    "entities": [],
+    "showOutlines": false,
+    "ctx": {},
+    "click": null,
+    "mouse": null,
+    "wheel": null,
+    "surfaceWidth": 1024,
+    "surfaceHeight": 768,
+    "timer": {
+      "gameTime": 0.05,
+      "maxStep": 0.05,
+      "lastTimestamp": 1612044808248
+    },
+    "clockTick": 0.05
+  },
+  "x": 0,
+  "y": 0
+}
