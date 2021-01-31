@@ -4,6 +4,7 @@ var ASSET_MANAGER = new AssetManager();
 
 
 function tempCreateObject(jsonString) {
+	console.log(jsonString);
 	var tile = JSON.parse(jsonString);
 	console.log(tile);
 	console.log(tile instanceof Tile);
@@ -21,8 +22,9 @@ ASSET_MANAGER.downloadAll(function () {
 
 	var start = new Start(gameEngine);
 
+	console.log("Loading file");
 	// download(start, 'tile.json', 'text/plain');
 	readTextFile("./tile.json", tempCreateObject)
 
-
+	console.log("Done");
 });
