@@ -183,7 +183,7 @@ class Level {
     }
 
     draw(ctx) {
-        this.draw2(ctx, 1024, 768, 10, Math.PI * 5 / 12, 1, 0.2, 2)
+        this.draw2(ctx, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2)
     }
 
     // tile_angle should be in radians

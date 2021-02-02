@@ -56,27 +56,24 @@ const black = {
 }
 
 var traditionalColorMap = {}
-traditionalColorMap[JSON.stringify(grey)] = [0, 0, 0];
-traditionalColorMap[JSON.stringify(red)] = [1, 0, 0];
+traditionalColorMap[JSON.stringify(grey)] = [224, 224, 224];
+traditionalColorMap[JSON.stringify(red)] = [255, 0, 0];
+traditionalColorMap[JSON.stringify(blue)] = [0, 0, 255];
+traditionalColorMap[JSON.stringify(yellow)] = [255, 255, 0];
+traditionalColorMap[JSON.stringify(purple)] = [125, 0, 255];
+traditionalColorMap[JSON.stringify(green)] = [0, 255, 0];
+traditionalColorMap[JSON.stringify(orange)] = [255, 125, 0];
+traditionalColorMap[JSON.stringify(brown)] = [160, 128, 96];
+traditionalColorMap[JSON.stringify(black)] = [0, 0, 0];
 
+var subtractiveColorMap = {}
+traditionalColorMap[JSON.stringify(grey)] = [224, 224, 224];
+traditionalColorMap[JSON.stringify(red)] = [255, 128, 255];
+traditionalColorMap[JSON.stringify(blue)] = [128, 255, 255];
+traditionalColorMap[JSON.stringify(yellow)] = [255, 255, 128];
+traditionalColorMap[JSON.stringify(purple)] = [0, 0, 255];
+traditionalColorMap[JSON.stringify(green)] = [0, 255, 0];
+traditionalColorMap[JSON.stringify(orange)] = [255, 0, 0];
+traditionalColorMap[JSON.stringify(brown)] = [128, 128, 128];
+traditionalColorMap[JSON.stringify(black)] = [0, 0, 0];
 
-console.log("grey");
-console.log(grey);
-console.log("traditionalColorMap");
-console.log(traditionalColorMap);
-console.log("grey color");
-console.log(traditionalColorMap.grey);
-
-var newGray = {
-    'red': false,
-    'blue': false,
-    'yellow': false,
-    'black': false
-};
-
-console.log("newGray");
-console.log(newGray);
-console.log("grey == newGray");
-console.log(grey == newGray);
-console.log("newGray color");
-console.log(traditionalColorMap[JSON.stringify(newGray)]);
