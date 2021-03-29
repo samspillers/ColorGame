@@ -216,52 +216,8 @@ class Level {
             var columnKeys = getSortedFloatKeysOfArray(this.tiles[x]);
             for (var j in columnKeys) {
                 var y = columnKeys[j];
-
-                // Get tile
-                var tile = this.tiles[x][y]
-
-                // Get x, y, and width and height of image to draw
-                var xOff = x - this.xMin;
-                var yOff = y - this.yMin;
-                var xPixel = this.border_size + this.xCenterOffset + xOff * (this.tileWidth + this.tileWidth * this.bridge_to_tile_ratio)
-                                     + (this.yMax - y) * (this.tileHorizontalOverhang + this.tileHorizontalOverhang * this.bridge_to_tile_ratio);
-                var yPixel = this.border_size + this.yCenterOffset + yOff * (this.tileHeight + this.tileHeight * this.bridge_to_tile_ratio);
-                var xWidth = this.tileWidth + this.tileHorizontalOverhang;
-                var yHeight = this.tileHeight;
-
-                // console.log("this.xMax");
-                // console.log(this.xMax);
-                // console.log("this.xMin");
-                // console.log(this.xMin);
-                // console.log("this.yMin");
-                // console.log(this.yMin);
-                // console.log("this.yMax");
-                // console.log(this.yMax);
-                // console.log("this.tileWidth");
-                // console.log(this.tileWidth);
-                // console.log("this.tileHeight");
-                // console.log(this.tileHeight);
-                // console.log("!this.tileHorizontalOverhang");
-                // console.log(!this.tileHorizontalOverhang);
-                // console.log("x");
-                // console.log(x);
-                // console.log("y");
-                // console.log(y);
-                // console.log("xOff");
-                // console.log(xOff);
-                // console.log("yOff");
-                // console.log(yOff);
-                // console.log("xPixel");
-                // console.log(xPixel);
-                // console.log("yPixel");
-                // console.log(yPixel);
-                // console.log("xWidth");
-                // console.log(xWidth);
-                // console.log("yHeight");
-                // console.log(yHeight);
-
-                // Draw image
-                tile.draw(ctx, xPixel, yPixel, xWidth, yHeight, this, x, y);
+                var tile = this.tiles[x][y]  // Get tile
+                tile.draw(ctx, this, x, y);  // Draw image
             }
         }
 
@@ -272,57 +228,12 @@ class Level {
             var columnKeys = getSortedFloatKeysOfArray(this.bridges[x]);
             for (var j in columnKeys) {
                 var y = columnKeys[j];
-
-                // Get tile
-                var bridge = this.bridges[x][y]
-
-                // Get x, y, and width and height of image to draw
-                var xOff = x - this.xMin + 0.5;
-                var yOff = y - this.yMin + 0.5;
-
-                var imageHeight = this.tileHeight + this.tileWidth * this.bridge_to_tile_ratio * this.bridge_depth_to_bridge_width_ratio;
-                
-                var xPixel = this.border_size + this.xCenterOffset + xOff * this.tileWidth + (xOff - 1) * this.tileWidth * this.bridge_to_tile_ratio
-                                     + (this.yMax - y) * this.tileHorizontalOverhang + (this.yMax - y - 1) * this.tileHorizontalOverhang * this.bridge_to_tile_ratio;
-                var yPixel = this.border_size + this.yCenterOffset + yOff * (this.tileHeight + this.tileHeight * this.bridge_to_tile_ratio) - imageHeight;
-                var xWidth = this.tileWidth * this.bridge_to_tile_ratio + this.tileHorizontalOverhang;
-                var yHeight = imageHeight;
-
-                // Draw image
-                bridge.draw(ctx, xPixel, yPixel, xWidth, yHeight, this, x, y);
+                var bridge = this.bridges[x][y]  // Get tile
+                bridge.draw(ctx, this, x, y);  // Draw image
             }
         }
 
-        var xOff = this.player.x - this.xMin;
-        var yOff = this.player.y - this.yMin;
-        var xPixel = this.border_size + this.xCenterOffset + xOff * (this.tileWidth + this.tileWidth * this.bridge_to_tile_ratio)
-                             + (this.yMax - this.player.y) * (this.tileHorizontalOverhang + this.tileHorizontalOverhang * this.bridge_to_tile_ratio);
-        var yPixel = this.border_size + this.yCenterOffset + yOff * (this.tileHeight + this.tileHeight * this.bridge_to_tile_ratio);
-        
-        var maxSize = this.tileWidth - this.tileHorizontalOverhang;
-        var playerSize = maxSize * PLAYER_TILE_SCALE;
-
-        var actualX = xPixel + this.tileHorizontalOverhang + maxSize / 2 - playerSize / 2;
-        var actualY = yPixel + this.tileHeight / 2 - playerSize / 2;
-
-        // console.log("xOff");
-        // console.log(xOff);
-        // console.log("yOff");
-        // console.log(yOff);
-        // console.log("xPixel");
-        // console.log(xPixel);
-        // console.log("yPixel");
-        // console.log(yPixel);
-        // console.log("maxSize");
-        // console.log(maxSize);
-        // console.log("playerSize");
-        // console.log(playerSize);
-        // console.log("actualX");
-        // console.log(actualX);
-        // console.log("actualY");
-        // console.log(actualY);
-
-        this.player.draw(ctx, actualX, actualY, playerSize, playerSize, this, this.player.x, this.player.y);
+        this.player.draw(ctx, this, this.player.x, this.player.y);
 
         throw "Stop!"
     }
@@ -352,9 +263,7 @@ class Drawable {
         if (colors && !Drawable.palette[imagePath]) {
             Drawable.palette[imagePath] = {};
         }
-
     };
-
 
     tileCoord(tileX, tileY, level) {
         var xOff = tileX - level.getXMin();
@@ -369,11 +278,7 @@ class Drawable {
         return [xPixel, yPixel];
     }
 
-    draw(ctx, x, y, width, height, level, tileX, tileY) {
-        console.log("calculated pos:");
-        console.log(this.tileCoord(tileX, tileY, level));
-        console.log("actual pos:");
-        console.log([x, y]);
+    draw(ctx, level, tileX, tileY) {
         
         if (this.colors && !Drawable.palette[this.imagePath][JSON.stringify(this.colors)]) {
             // var newColor = getColor(grey, colorMode);  // Forces all to be grey
@@ -381,41 +286,77 @@ class Drawable {
 
             Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.sprite);
             replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (this.pattern) ? this.colors : false);
+
         }
         var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.sprite;
 
-        ctx.drawImage(spriteToDraw, this.sx, this.sy, this.sw, this.sh, x, y, width, height);
+        var pixelCoor = this.tileCoord(tileX, tileY, level);
+        var pixelOffset = this.drawOffset(level);
+        pixelCoor[0] += pixelOffset[0];
+        pixelCoor[1] += pixelOffset[1];
+
+        var dimensions = this.drawSize(level);
+
+        ctx.drawImage(spriteToDraw, this.sx, this.sy, this.sw, this.sh, pixelCoor[0], pixelCoor[1], dimensions[0], dimensions[1]);
         // ctx.drawImage(this.spritesheet, 0, 0, 128, 97, x, y, width, height);
     }
+
+    // @Abstract
+    // drawOffset(level);
+    // drawSize(level);
 }
 
 class Tile extends Drawable {
-    constructor(imagePath, sx, sy, sw, sh) {
-        (imagePath != undefined) ? super(imagePath, sx, sy, sw, sh) : super("./sprites/tile.png", 0, 0, 128, 97);
+    constructor(imagePath, sx, sy, sw, sh, colors = undefined, pattern = false, colorMode = undefined) {
+        (imagePath != undefined) ? super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode) : super("./sprites/tile.png", 0, 0, 128, 97);
     };
 
     // @Abstract
     land(player) {
         // Do nothing
     }
+
+    drawOffset(level) {
+        return [0, 0];
+    }
+
+    drawSize(level) {
+        return [level.getTileWidth() + level.getTileHorizontalOverhang(), level.getTileHeight()];
+    }
 }
 
 class Bridge extends Drawable {
-    constructor(imagePath, sx, sy, sw, sh) {
-        super(imagePath, sx, sy, sw, sh);
+    constructor(imagePath, sx, sy, sw, sh, colors = undefined, pattern = false, colorMode = undefined) {
+        super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode);
     };
 
     // @Abstract
     attemptPass(player) {
         // Do nothing
     }
+
+    // TODO: Both of the following
+    drawOffset(level) {
+        if (vertical) {
+            return [level.getTileWidth() * level.getBridge_to_tile_ratio() * -1, 0];
+        } else {
+            return [/*over a little*/, /*up a little*/];
+        }
+    }
+    drawSize(level) {
+        if (vertical) {
+            return [level.getTileWidth() * level.getBridge_to_tile_ratio() * -1, 0];
+        } else {
+            return [/**/, /**/];
+        }
+    }
 }
 
 class ColorBarrier extends Bridge {
 
     // colors should be an array of color strings
-    constructor(imagePath, sx, sy, sw, sh, colors) {
-        super(imagePath, sx, sy, sw, sh);
+    constructor(imagePath, sx, sy, sw, sh, colors, pattern = false, colorMode = undefined) {
+        super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode);
         Object.assign(this, { colors });
 
     };
@@ -451,7 +392,7 @@ class KeyGate extends Bridge {
     }
 }
 
-class ColorPad extends Drawable {
+class ColorPad extends Tile {
 
     constructor(color, pattern = false, colorMode = undefined) {
         super("./sprites/tileColorPad.png", 0, 0, 128, 97, color, pattern, colorMode);
@@ -477,7 +418,7 @@ class ColorPad extends Drawable {
     // }
 }
 
-class Finish extends Drawable {
+class Finish extends Tile {
     constructor(color, pattern = false, colorMode = undefined) {
         super("./sprites/tileFinish.png", 0, 0, 128, 97, color, pattern, colorMode);
     }

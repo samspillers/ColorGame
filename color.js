@@ -1,6 +1,6 @@
 const MAX_GRAYING = 0.5;  // Proportion
 
-// Following are in pixels
+// The following are in pixels
 const LINE_SPACING = 30;
 const LINE_THICCNESS = 2;
 const LINE_STRAY_CURVE = 4;

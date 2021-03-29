@@ -1,10 +1,7 @@
 
 class Player extends Drawable {
     constructor(pattern = false, colorMode = undefined) {
-        super("./sprites/player.png", 0, 0, 94, 94, brown, pattern, colorMode);
-
-        console.log("pattern");
-        console.log(pattern);
+        super("./sprites/player.png", 0, 0, 94, 94, grey, pattern, colorMode);
 
         this.inventory = [];
 
@@ -13,6 +10,18 @@ class Player extends Drawable {
         // this.colors["blue"] = false;
         // this.colors["yellow"] = false;
         // this.colors["black"] = false;
+    }
+
+    drawOffset(level) {
+        var maxSize = level.getTileWidth() - level.getTileHorizontalOverhang();
+        var playerSize = maxSize * PLAYER_TILE_SCALE;
+        return [level.getTileHorizontalOverhang() + maxSize / 2 - playerSize / 2, level.getTileHeight() / 2 - playerSize / 2];
+    }
+
+    drawSize(level) {
+        var maxSize = level.getTileWidth() - level.getTileHorizontalOverhang();
+        var playerSize = maxSize * PLAYER_TILE_SCALE;
+        return [playerSize, playerSize];
     }
 
     up() {
