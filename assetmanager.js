@@ -19,10 +19,11 @@ class AssetManager {
         if (this.downloadQueue.length === 0) setTimeout(callback, 10);
         for (var i = 0; i < this.downloadQueue.length; i++) {
             var img = new Image();
+            img.crossOrigin = "Anonymous";
+            // img.setAttribute('crossOrigin', '');
             var that = this;
 
             var path = this.downloadQueue[i];
-            console.log(path);
 
             img.addEventListener("load", function () {
                 console.log("Loaded " + this.src);

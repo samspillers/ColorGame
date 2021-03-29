@@ -1,15 +1,18 @@
 
-class Player {
-    constructor(x, y, level) {
-        Object.assign(this, { x, y, level });
+class Player extends Drawable {
+    constructor(pattern = false, colorMode = undefined) {
+        super("./sprites/player.png", 0, 0, 94, 94, brown, pattern, colorMode);
+
+        console.log("pattern");
+        console.log(pattern);
 
         this.inventory = [];
 
-        this.colors = {};
-        this.colors["red"] = false;
-        this.colors["blue"] = false;
-        this.colors["yellow"] = false;
-        
+        // this.colors = {};
+        // this.colors["red"] = false;
+        // this.colors["blue"] = false;
+        // this.colors["yellow"] = false;
+        // this.colors["black"] = false;
     }
 
     up() {
@@ -31,14 +34,14 @@ class Player {
 
     }
 
-    attemptToMove(x_old, y_old, x_new, y_new) {
-        newTile = this.level.getTile(x_new, y_new);
+    attemptToMove(x_old, y_old, x_new, y_new, level) {
+        newTile = level.getTile(x_new, y_new);
 
         if (!newTile) {  // Return false if tile does not exist
             return false;
         }
 
-        bridge = this.level.getBridge(x_old, y_old, x_new, y_new3);
+        bridge = level.getBridge(x_old, y_old, x_new, y_new3);
 
         success = !bridge || bridge.attemptPass(this);
         
@@ -48,10 +51,10 @@ class Player {
         return success;
     }
 
-    moveToLocation(x, y) {
+    moveToLocation(x, y, level) {
         this.x = x;
         this.y = y;
-        this.level.getTile(x_new, y_new).land(this);
+        level.getTile(x_new, y_new).land(this);
     }
 
     hasKey(keyId) {

@@ -10,6 +10,8 @@ class GameEngine {
         this.wheel = null;
         this.surfaceWidth = null;
         this.surfaceHeight = null;
+
+        this.directionQueue = [];
     };
 
     init(ctx) {
@@ -59,6 +61,27 @@ class GameEngine {
             //console.log(getXandY(e));
             that.rightclick = getXandY(e);
             e.preventDefault();
+        }, false);
+        
+        this.ctx.canvas.addEventListener("keyup", function (e) {
+            switch (e.code) {
+                case "ArrowLeft":
+                case "KeyA":
+                    that.directionQueue.push("left");
+                    break;
+                case "ArrowRight":
+                case "KeyD":
+                    that.directionQueue.push("right");
+                    break;
+                case "ArrowUp":
+                case "KeyW":
+                    that.directionQueue.push("up");
+                    break;
+                case "ArrowDown":
+                case "KeyS":
+                    that.directionQueue.push("down");
+                    break;
+            }
         }, false);
     };
 
