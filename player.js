@@ -1,7 +1,9 @@
 
 class Player extends Drawable {
-    constructor(pattern = false, colorMode = undefined) {
-        super("./sprites/player.png", 0, 0, 94, 94, grey, pattern, colorMode);
+    constructor(level) {
+        super("./sprites/player.png", 0, 0, 94, 94, copy(grey));
+
+        this.level = level;
 
         this.inventory = [];
 
@@ -25,34 +27,34 @@ class Player extends Drawable {
     }
 
     up() {
-        success = this.attemptToMove(this.x, this.y, this.x, this.y - 1);  // Note: "Up" is a decrease in y coordinate
+        var success = this.attemptToMove(this.x, this.y, this.x, this.y - 1);  // Note: "Up" is a decrease in y coordinate
     }
 
     left() {
-        success = this.attemptToMove(this.x, this.y, this.x - 1, this.y);
+        var success = this.attemptToMove(this.x, this.y, this.x - 1, this.y);
 
     }
 
     down() {
-        success = this.attemptToMove(this.x, this.y, this.x, this.y + 1);  // Note: "Down" is an increase in y coordinate
+        var success = this.attemptToMove(this.x, this.y, this.x, this.y + 1);  // Note: "Down" is an increase in y coordinate
 
     }
 
     right() {
-        success = this.attemptToMove(this.x, this.y, this.x + 1, this.y);
+        var success = this.attemptToMove(this.x, this.y, this.x + 1, this.y);
 
     }
 
-    attemptToMove(x_old, y_old, x_new, y_new, level) {
-        newTile = level.getTile(x_new, y_new);
+    attemptToMove(x_old, y_old, x_new, y_new) {
+        var newTile = this.level.getTile(x_new, y_new);
 
         if (!newTile) {  // Return false if tile does not exist
             return false;
         }
 
-        bridge = level.getBridge(x_old, y_old, x_new, y_new3);
+        var bridge = this.level.getBridge(x_old, y_old, x_new, y_new);
 
-        success = !bridge || bridge.attemptPass(this);
+        var success = !bridge || bridge.attemptPass(this);
         
         if (success) {
             this.moveToLocation(x_new, y_new);
@@ -63,7 +65,7 @@ class Player extends Drawable {
     moveToLocation(x, y, level) {
         this.x = x;
         this.y = y;
-        level.getTile(x_new, y_new).land(this);
+        this.level.getTile(x, y).land(this);
     }
 
     hasKey(keyId) {

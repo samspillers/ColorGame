@@ -27,13 +27,13 @@ function getSortedFloatKeysOfArray(array) {
 }
 
 class Level {
-    constructor(total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio) {
-        Object.assign(this, { total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio });
+    constructor(colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio) {
+        Object.assign(this, { colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio });
 
         this.tiles = {};
         this.bridges = {};
 
-        this.player = new Player(true, "bababooey");
+        this.player = new Player(this);
         this.player.x = 0;
         this.player.y = 0;
     };
@@ -57,6 +57,9 @@ class Level {
     }
 
     getTile(x, y) {
+        if (!this.tiles[x]) {  // column does not exist
+            return undefined;
+        }
         return this.tiles[x][y];
     }
 
@@ -68,6 +71,9 @@ class Level {
         }
         var bridgeX = (x1 + x2) / 2;
         var bridgeY = (y1 + y2) / 2;
+        if (!this.bridges[bridgeX]) {
+            this.bridges[bridgeX] = {};
+        }
         if (this.bridges[bridgeX][bridgeY]) {
             throw "bridge already there";
         }
@@ -83,6 +89,9 @@ class Level {
     getBridge(x1, y1, x2, y2) {
         var bridgeX = (x1 + x2) / 2;
         var bridgeY = (y1 + y2) / 2;
+        if (!this.bridges[bridgeX]) {  // If no bridges at that location exist
+            return undefined;
+        }
         return this.bridges[bridgeX][bridgeY];
     }
 
@@ -148,6 +157,10 @@ class Level {
         return this.tileHeight;
     }
 
+    getColorSettings() {
+        return this.colorSettings;
+    }
+
     __bakePixelSizing() {
         // Find the dimensions of the level
         var [xMin, xMax] = getMinMaxIndecesOfArray(this.tiles);
@@ -199,12 +212,8 @@ class Level {
 
     }
 
-    draw(ctx) {
-        this.draw2(ctx)
-    }
-
     // tile_angle should be in radians
-    draw2(ctx) {
+    draw(ctx) {
         if (!this.xMax || !this.xMin || !this.yMax || !this.yMin || !this.tileWidth || !this.tileHeight || !this.xCenterOffset || !this.yCenterOffset || !this.tileHorizontalOverhang) {
             this.__bakePixelSizing();
         }
@@ -234,8 +243,6 @@ class Level {
         }
 
         this.player.draw(ctx, this, this.player.x, this.player.y);
-
-        throw "Stop!"
     }
 
     update() {}
@@ -246,8 +253,8 @@ class Drawable {
     static palette = [];
 
     // If no colors is given, then the object does not replalce its color. 
-    constructor(imagePath, sx, sy, sw, sh, colors = undefined, pattern = false, colorMode = undefined) {
-        Object.assign(this, { imagePath, sx, sy, sw, sh, colors, pattern, colorMode });
+    constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
+        Object.assign(this, { imagePath, sx, sy, sw, sh, colors });
         
         var spritesheet = ASSET_MANAGER.getAsset(imagePath);
 
@@ -279,13 +286,13 @@ class Drawable {
     }
 
     draw(ctx, level, tileX, tileY) {
-        
+        var colorSettings = level.getColorSettings();
         if (this.colors && !Drawable.palette[this.imagePath][JSON.stringify(this.colors)]) {
             // var newColor = getColor(grey, colorMode);  // Forces all to be grey
-            var newColor = getColor(this.colors, this.colorMode);
+            var newColor = getColor(this.colors, colorSettings.colorMode);
 
             Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.sprite);
-            replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (this.pattern) ? this.colors : false);
+            replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (colorSettings.pattern) ? this.colors : false);
 
         }
         var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.sprite;
@@ -307,8 +314,8 @@ class Drawable {
 }
 
 class Tile extends Drawable {
-    constructor(imagePath, sx, sy, sw, sh, colors = undefined, pattern = false, colorMode = undefined) {
-        (imagePath != undefined) ? super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode) : super("./sprites/tile.png", 0, 0, 128, 97);
+    constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
+        (imagePath != undefined) ? super(imagePath, sx, sy, sw, sh, colors) : super("./sprites/tile.png", 0, 0, 128, 97);
     };
 
     // @Abstract
@@ -326,8 +333,8 @@ class Tile extends Drawable {
 }
 
 class Bridge extends Drawable {
-    constructor(imagePath, sx, sy, sw, sh, colors = undefined, pattern = false, colorMode = undefined) {
-        super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode);
+    constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
+        super(imagePath, sx, sy, sw, sh, colors);
     };
 
     // @Abstract
@@ -355,8 +362,8 @@ class Bridge extends Drawable {
 class ColorBarrier extends Bridge {
 
     // colors should be an array of color strings
-    constructor(imagePath, sx, sy, sw, sh, colors, pattern = false, colorMode = undefined) {
-        super(imagePath, sx, sy, sw, sh, colors, pattern, colorMode);
+    constructor(imagePath, sx, sy, sw, sh, colors) {
+        super(imagePath, sx, sy, sw, sh, colors);
         Object.assign(this, { colors });
 
     };
@@ -394,14 +401,14 @@ class KeyGate extends Bridge {
 
 class ColorPad extends Tile {
 
-    constructor(color, pattern = false, colorMode = undefined) {
-        super("./sprites/tileColorPad.png", 0, 0, 128, 97, color, pattern, colorMode);
+    constructor(colors) {
+        super("./sprites/tileColorPad.png", 0, 0, 128, 97, colors);
     }
 
     land(player) {
         if (!player.colors["black"]) {
-            for (var color in this.color) {
-                if (this.color[color]) {
+            for (var color in this.colors) {
+                if (this.colors[color]) {
                     player.colors[color] = !player.colors[color];
                 }
             }
@@ -419,8 +426,8 @@ class ColorPad extends Tile {
 }
 
 class Finish extends Tile {
-    constructor(color, pattern = false, colorMode = undefined) {
-        super("./sprites/tileFinish.png", 0, 0, 128, 97, color, pattern, colorMode);
+    constructor(colors) {
+        super("./sprites/tileFinish.png", 0, 0, 128, 97, colors);
     }
 }
 

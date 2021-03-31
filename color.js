@@ -215,3 +215,9 @@ function getColor(color, colorMode) {
 function mod(n, m) {
     return ((n % m) + m) % m;
 }
+
+class ColorSettings {
+    constructor(colorMode = undefined, pattern = false) {
+        Object.assign(this, { colorMode, pattern });
+    }
+}
