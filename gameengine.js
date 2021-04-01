@@ -12,7 +12,8 @@ class GameEngine {
         this.surfaceHeight = null;
 
         this.directionQueue = [];
-        this.colorSettings = null;
+        this.colorSettings = new ColorSettings();
+        this.board = new ColorVennDiagram(this);
         this.currentLevel = null;
 
     };
@@ -24,6 +25,10 @@ class GameEngine {
     loadLevel(level) {
         this.currentLevel = level;
     } 
+
+    getColorSettings() {
+        return this.colorSettings;
+    }
 
     flushDirectionQueue() {
         while (this.directionQueue.length > 0) {
@@ -127,6 +132,7 @@ class GameEngine {
         //     this.entities[i].draw(this.ctx);
         // }
         this.currentLevel.draw(this.ctx);
+        this.board.draw(this.ctx, 0, 768 - this.board.sprite.height * DEFAULT_VENN_SCALE, 1);
     };
 
     update() {

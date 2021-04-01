@@ -1,14 +1,15 @@
 const MAX_GRAYING = 0.5;  // Proportion
 
 // The following are in pixels
-const LINE_SPACING = 30;
+const LINE_SPACING = 25;
 const LINE_THICCNESS = 2;
 const LINE_STRAY_CURVE = 4;
 const LINE_STRAY_BEND = 6;
 const LINE_ANGLE = Math.PI / 3;
 
-var primaryColors = ["red", "blue", "yellow"];
-var oldColor = [0, 69, 0];
+const primaryColors = ["red", "blue", "yellow"];
+const DEFAULT_OLD_COLOR = [0, 69, 0];
+const DEFAULT_VENN_SCALE = 0.5;
 
 const grey = {
     'red': false,
@@ -129,16 +130,15 @@ additiveColorMap[JSON.stringify(brown)] = RGB['lightgrey'];
 additiveColorMap[JSON.stringify(black)] = RGB['black'];
 
 
-function replaceImageColor(imageCanvas, newColor, pattern) {
+function replaceImageColor(imageCanvas, newColor, pattern, scale = 1, oldColor = DEFAULT_OLD_COLOR) {
+    // scale is the amount at which the image will be scaled later. This adjusts the pixel location values so that the same sized patterns are used everywhere.
 
     var width = imageCanvas.width;
-    // var height = imageCanvas.height;
-
     var imageData = imageCanvas.getContext('2d').getImageData(0, 0, imageCanvas.width, imageCanvas.height);
     for (var i = 0; i < imageData.data.length; i+= 4) {
         if (imageData.data[i] == oldColor[0] && imageData.data[i + 1] == oldColor[1] && imageData.data[i + 2] == oldColor[2]) {
-            var x = (i / 4) % width;
-            var y = Math.floor((i / 4) / width);
+            var x = (i / 4) % width * scale;
+            var y = Math.floor((i / 4) / width) * scale;
 
             var patternScalar = 0;
             if (pattern) {
@@ -219,5 +219,49 @@ function mod(n, m) {
 class ColorSettings {
     constructor(colorMode = undefined, pattern = false) {
         Object.assign(this, { colorMode, pattern });
+    }
+}
+
+class ColorVennDiagram {
+    constructor(gameEngine) {
+        Object.assign(this, { gameEngine });
+
+        var spritesheet = ASSET_MANAGER.getAsset("./sprites/venn.png");
+        this.sx = 0;
+        this.sy = 0;
+        this.sw = 429;
+        this.sh = 421;
+
+        this.sprite = document.createElement('canvas');
+        this.sprite.width = spritesheet.width;
+        this.sprite.height = spritesheet.height;
+        var offscreenCtx = this.sprite.getContext('2d');
+
+        offscreenCtx.save();
+        offscreenCtx.drawImage(spritesheet, this.sx, this.sy, this.sw, this.sh, 0, 0, spritesheet.width, spritesheet.height);
+        offscreenCtx.restore();
+    }
+
+    draw(ctx, x, y, scale) {
+        this.__recursiveColorify(this.sprite,this.gameEngine.getColorSettings(), copy(grey), [...primaryColors], scale * DEFAULT_VENN_SCALE);
+        ctx.drawImage(this.sprite, this.sx, this.sy, this.sw, this.sh, x, y, this.sprite.width * scale * DEFAULT_VENN_SCALE, this.sprite.height * scale * DEFAULT_VENN_SCALE);
+    }
+
+    __recursiveColorify(canvas, colorSettings, colors, colorsRemaining, scale) {
+        if (colorsRemaining.length > 0) {
+            var currentColor = colorsRemaining.splice(0, 1);
+            colors[currentColor] = true;
+            this.__recursiveColorify(canvas, colorSettings, colors, colorsRemaining, scale);
+            colors[currentColor] = false;
+            this.__recursiveColorify(canvas, colorSettings, colors, colorsRemaining, scale);
+            colorsRemaining.unshift(currentColor);
+        } else {
+            var oldColor = [];
+            for (const color of primaryColors) {
+                oldColor.push((colors[color]) ? 69 : 0);
+            }
+            var newColor = getColor(colors, colorSettings.colorMode);
+            replaceImageColor(canvas, newColor, (colorSettings.pattern) ? colors : false, scale, oldColor);
+        }
     }
 }

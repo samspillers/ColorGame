@@ -5,7 +5,7 @@ function getMinMaxIndecesOfArray(array) {
 	var max = undefined;
 	var keys = Object.keys(array);
 
-	for (i in Object.keys(array)) {
+	for (const i in Object.keys(array)) {
 		if (min == undefined || parseFloat(keys[i]) < min) {
 			min = parseFloat(keys[i]);
 		}
@@ -19,7 +19,7 @@ function getMinMaxIndecesOfArray(array) {
 function getSortedFloatKeysOfArray(array) {
     var keys = Object.keys(array);
     var output = []
-    for (var key in keys) {
+    for (const key in keys) {
         output.push(parseFloat(keys[key]));
     }
     output.sort();
@@ -166,7 +166,7 @@ class Level {
         var [xMin, xMax] = getMinMaxIndecesOfArray(this.tiles);
         var yMin = undefined;
         var yMax = undefined;
-        for (var row in this.tiles) {
+        for (const row in this.tiles) {
             var [currYMin, currYMax] = getMinMaxIndecesOfArray(this.tiles[row]);
 
             if (yMin == undefined || currYMin < yMin) {
@@ -286,16 +286,6 @@ class Drawable {
     }
 
     draw(ctx, level, tileX, tileY) {
-        var colorSettings = level.getColorSettings();
-        if (this.colors && !Drawable.palette[this.imagePath][JSON.stringify(this.colors)]) {
-            // var newColor = getColor(grey, colorMode);  // Forces all to be grey
-            var newColor = getColor(this.colors, colorSettings.colorMode);
-
-            Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.sprite);
-            replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (colorSettings.pattern) ? this.colors : false);
-
-        }
-        var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.sprite;
 
         var pixelCoor = this.tileCoord(tileX, tileY, level);
         var pixelOffset = this.drawOffset(level);
@@ -303,6 +293,20 @@ class Drawable {
         pixelCoor[1] += pixelOffset[1];
 
         var dimensions = this.drawSize(level);
+
+        var horizontalScale = dimensions[0] / this.sprite.width;
+
+        var colorSettings = level.getColorSettings();
+        if (this.colors && !Drawable.palette[this.imagePath][JSON.stringify(this.colors)]) {
+            // var newColor = getColor(grey, colorMode);  // Forces all to be grey
+            var newColor = getColor(this.colors, colorSettings.colorMode);
+
+            Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.sprite);
+
+            replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (colorSettings.pattern) ? this.colors : false, horizontalScale);
+
+        }
+        var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.sprite;
 
         ctx.drawImage(spriteToDraw, this.sx, this.sy, this.sw, this.sh, pixelCoor[0], pixelCoor[1], dimensions[0], dimensions[1]);
         // ctx.drawImage(this.spritesheet, 0, 0, 128, 97, x, y, width, height);
@@ -370,7 +374,7 @@ class ColorBarrier extends Bridge {
 
     attemptPass(player) {
         passable = true;
-        for (color in colors) {
+        for (const color in colors) {
             passable = passable && player.colors[color];
         }
         return passable;
@@ -407,7 +411,7 @@ class ColorPad extends Tile {
 
     land(player) {
         if (!player.colors["black"]) {
-            for (var color in this.colors) {
+            for (const color in this.colors) {
                 if (this.colors[color]) {
                     player.colors[color] = !player.colors[color];
                 }

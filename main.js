@@ -1,5 +1,3 @@
-var gameEngine = new GameEngine();
-
 var ASSET_MANAGER = new AssetManager();
 
 ASSET_MANAGER.queueDownload("./sprites/temp.png");
@@ -7,15 +5,18 @@ ASSET_MANAGER.queueDownload("./sprites/tile.png");
 ASSET_MANAGER.queueDownload("./sprites/player.png");
 ASSET_MANAGER.queueDownload("./sprites/tileColorPad.png");
 ASSET_MANAGER.queueDownload("./sprites/tileFinish.png");
+ASSET_MANAGER.queueDownload("./sprites/venn.png");
 
 
 ASSET_MANAGER.downloadAll(function () {
 	var canvas = document.getElementById('gameWorld');
 	var ctx = canvas.getContext('2d');
+
+	var gameEngine = new GameEngine();
 	gameEngine.init(ctx);
 
 	var colorSettings = new ColorSettings("traditional", true);
-	gameEngine.setColorSettings(ColorSettings);
+	gameEngine.setColorSettings(colorSettings);
 
 	var tempLevel = new Level(colorSettings, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2);
 	tempLevel.addTile(0, 0, new Tile());
