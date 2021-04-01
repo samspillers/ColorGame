@@ -11,6 +11,8 @@ const primaryColors = ["red", "blue", "yellow"];
 const DEFAULT_OLD_COLOR = [0, 69, 0];
 const DEFAULT_VENN_SCALE = 0.5;
 
+const VENN_FILE_NAME = "./sprites/venn.png";
+
 const grey = {
     'red': false,
     'blue': false,
@@ -216,6 +218,15 @@ function mod(n, m) {
     return ((n % m) + m) % m;
 }
 
+function getColorNameByColor(color) {
+    for (colorName in colorDict) {
+        if (JSON.stringify(color) === JSON.stringify(colorDict[colorName])) {
+            return colorName;
+        }
+    }
+    return undefined;
+}
+
 class ColorSettings {
     constructor(colorMode = undefined, pattern = false) {
         Object.assign(this, { colorMode, pattern });
@@ -223,10 +234,12 @@ class ColorSettings {
 }
 
 class ColorVennDiagram {
-    constructor(gameEngine) {
-        Object.assign(this, { gameEngine });
+    static overlays = {};
 
-        var spritesheet = ASSET_MANAGER.getAsset("./sprites/venn.png");
+    constructor(gameEngine, followColor = false) {
+        Object.assign(this, { gameEngine, followColor });
+
+        var spritesheet = ASSET_MANAGER.getAsset(VENN_FILE_NAME);
         this.sx = 0;
         this.sy = 0;
         this.sw = 429;
@@ -245,6 +258,22 @@ class ColorVennDiagram {
     draw(ctx, x, y, scale) {
         this.__recursiveColorify(this.sprite,this.gameEngine.getColorSettings(), copy(grey), [...primaryColors], scale * DEFAULT_VENN_SCALE);
         ctx.drawImage(this.sprite, this.sx, this.sy, this.sw, this.sh, x, y, this.sprite.width * scale * DEFAULT_VENN_SCALE, this.sprite.height * scale * DEFAULT_VENN_SCALE);
+        if (this.followColor) {
+            var colorName = getColorNameByColor(this.gameEngine.getLevel().player.colors);
+
+            var fileName = VENN_FILE_NAME.substring(0, VENN_FILE_NAME.length - 4) + "-" + colorName + ".png";
+            var sprite = this.__getVennOverlay(fileName);
+            sprite = (!sprite) ? this.__getVennOverlay("./sprites/venn-grey.png") : sprite;
+            ctx.drawImage(sprite, this.sx, this.sy, this.sw, this.sh, x, y, this.sprite.width * scale * DEFAULT_VENN_SCALE, this.sprite.height * scale * DEFAULT_VENN_SCALE);
+            // throw "stop"
+        }
+    }
+
+    __getVennOverlay(filename) {
+        if (!ColorVennDiagram.overlays[filename]) {
+            ColorVennDiagram.overlays[filename] = ASSET_MANAGER.getAsset(filename);
+        }
+        return ColorVennDiagram.overlays[filename];
     }
 
     __recursiveColorify(canvas, colorSettings, colors, colorsRemaining, scale) {

@@ -13,7 +13,7 @@ class GameEngine {
 
         this.directionQueue = [];
         this.colorSettings = new ColorSettings();
-        this.board = new ColorVennDiagram(this);
+        this.board = new ColorVennDiagram(this, true);
         this.currentLevel = null;
 
     };
@@ -25,6 +25,10 @@ class GameEngine {
     loadLevel(level) {
         this.currentLevel = level;
     } 
+    
+    getLevel() {
+        return this.currentLevel;
+    }
 
     getColorSettings() {
         return this.colorSettings;

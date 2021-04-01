@@ -6,6 +6,15 @@ ASSET_MANAGER.queueDownload("./sprites/player.png");
 ASSET_MANAGER.queueDownload("./sprites/tileColorPad.png");
 ASSET_MANAGER.queueDownload("./sprites/tileFinish.png");
 ASSET_MANAGER.queueDownload("./sprites/venn.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-grey.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-red.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-blue.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-yellow.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-purple.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-green.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-orange.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-brown.png");
+ASSET_MANAGER.queueDownload("./sprites/venn-black.png");
 
 
 ASSET_MANAGER.downloadAll(function () {
@@ -15,25 +24,19 @@ ASSET_MANAGER.downloadAll(function () {
 	var gameEngine = new GameEngine();
 	gameEngine.init(ctx);
 
-	var colorSettings = new ColorSettings("traditional", true);
+	var colorSettings = new ColorSettings("traditional", false);
 	gameEngine.setColorSettings(colorSettings);
 
 	var tempLevel = new Level(colorSettings, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2);
 	tempLevel.addTile(0, 0, new Tile());
 	tempLevel.addTile(0, 1, new Tile());
-	tempLevel.addTile(-1, 2, new ColorPad(copy(grey)));
-	tempLevel.addTile(-2, 2, new ColorPad(copy(red)));
-	tempLevel.addTile(-3, 2, new ColorPad(copy(blue)));
-	tempLevel.addTile(-4, 2, new ColorPad(copy(yellow)));
-	tempLevel.addTile(-5, 2, new ColorPad(copy(purple)));
-	tempLevel.addTile(-6, 2, new ColorPad(copy(green)));
-	tempLevel.addTile(-7, 2, new ColorPad(copy(orange)));
-	tempLevel.addTile(-8, 2, new ColorPad(copy(brown)));
-	tempLevel.addTile(-9, 2, new ColorPad(copy(black)));
-	tempLevel.addTile(0, 2, new Tile());
-	tempLevel.addTile(1, 2, new Tile());
-	tempLevel.addTile(0, 3, new Tile());
-	tempLevel.addTile(0, 4, new Finish(copy(red)));
+	tempLevel.addTile(0, -1, new Tile());
+	tempLevel.addTile(1, 0, new Tile());
+	tempLevel.addTile(-1, 0, new Tile());
+	tempLevel.addTile(-2, 0, new ColorPad(copy(red)));
+	tempLevel.addTile(0, -2, new ColorPad(copy(blue)));
+	tempLevel.addTile(2, 0, new ColorPad(copy(yellow)));
+	tempLevel.addTile(0, 2, new Finish(copy(brown)));
 
 	gameEngine.loadLevel(tempLevel);
 

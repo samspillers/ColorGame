@@ -250,7 +250,7 @@ class Level {
 
 // Abstract Class
 class Drawable {
-    static palette = [];
+    static palette = {};
 
     // If no colors is given, then the object does not replalce its color. 
     constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
