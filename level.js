@@ -247,6 +247,7 @@ class Level {
 
     update() {}
 }
+classList.push(Level);
 
 // Abstract Class
 class Drawable {
@@ -316,6 +317,7 @@ class Drawable {
     // drawOffset(level);
     // drawSize(level);
 }
+classList.push(Drawable);
 
 class Tile extends Drawable {
     constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
@@ -335,6 +337,7 @@ class Tile extends Drawable {
         return [level.getTileWidth() + level.getTileHorizontalOverhang(), level.getTileHeight()];
     }
 }
+classList.push(Tile);
 
 class Bridge extends Drawable {
     constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
@@ -362,6 +365,7 @@ class Bridge extends Drawable {
         }
     }
 }
+classList.push(Bridge);
 
 class ColorBarrier extends Bridge {
 
@@ -384,6 +388,7 @@ class ColorBarrier extends Bridge {
 
     }
 }
+classList.push(ColorBarrier);
 
 class KeyGate extends Bridge {
 
@@ -402,6 +407,7 @@ class KeyGate extends Bridge {
 
     }
 }
+classList.push(KeyGate);
 
 class ColorPad extends Tile {
 
@@ -428,12 +434,14 @@ class ColorPad extends Tile {
 
     // }
 }
+classList.push(ColorPad);
 
 class Finish extends Tile {
     constructor(colors) {
         super("./sprites/tileFinish.png", 0, 0, 128, 97, colors);
     }
 }
+classList.push(Finish);
 
 function copyCanvas(oldCanvas) {
     var sprite = document.createElement('canvas');

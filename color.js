@@ -232,6 +232,7 @@ class ColorSettings {
         Object.assign(this, { colorMode, pattern });
     }
 }
+classList.push(ColorSettings);
 
 class ColorVennDiagram {
     static overlays = {};

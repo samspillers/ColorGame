@@ -1,3 +1,5 @@
+const classList = [];
+
 var ASSET_MANAGER = new AssetManager();
 
 ASSET_MANAGER.queueDownload("./sprites/temp.png");
@@ -15,7 +17,6 @@ ASSET_MANAGER.queueDownload("./sprites/venn-green.png");
 ASSET_MANAGER.queueDownload("./sprites/venn-orange.png");
 ASSET_MANAGER.queueDownload("./sprites/venn-brown.png");
 ASSET_MANAGER.queueDownload("./sprites/venn-black.png");
-
 
 ASSET_MANAGER.downloadAll(function () {
 	var canvas = document.getElementById('gameWorld');

@@ -1,4 +1,3 @@
-
 class Player extends Drawable {
     constructor(level) {
         super("./sprites/player.png", 0, 0, 94, 94, copy(grey));
@@ -77,3 +76,4 @@ class Player extends Drawable {
         return false;
     }
 }
+classList.push(Player);
