@@ -12,15 +12,6 @@
 //     return objectLoaded
 //  }
 
-function replacer(key, value) {
-	try {
-		JSON.stringify(value);
-		return JSON.stringify(value, replacer);
-	} catch (e) {
-		return value;	
-	}
-}
-
 function jsonifyObject(obj) {
 	if (obj instanceof Object) {
 		var out = {};
@@ -30,7 +21,12 @@ function jsonifyObject(obj) {
 		}
 		return out;
 	} else {
-		return JSON.stringify(obj);
+        return obj;
+        if (obj instanceof String || typeof obj === 'string') {
+            return obj;
+        } else {
+            return JSON.stringify(obj);
+        }
 	}
 }
 function interpretJSON(obj, classMap) {
@@ -46,7 +42,7 @@ function interpretJSON(obj, classMap) {
 	return out;
 }
 
-function createClassMap() {
+function createClassMap(classList) {
     var classMap = {};
     for (const x of classList) {
         classMap[x.name] = x;

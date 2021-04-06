@@ -252,6 +252,7 @@ classList.push(Level);
 // Abstract Class
 class Drawable {
     static palette = {};
+    #sprite;
 
     // If no colors is given, then the object does not replalce its color. 
     constructor(imagePath, sx, sy, sw, sh, colors = undefined) {
@@ -259,18 +260,15 @@ class Drawable {
         
         var spritesheet = ASSET_MANAGER.getAsset(imagePath);
 
-        this.sprite = document.createElement('canvas');
-        this.sprite.width = spritesheet.width;
-        this.sprite.height = spritesheet.height;
-        var offscreenCtx = this.sprite.getContext('2d');
+        this.#sprite = document.createElement('canvas');
+        this.#sprite.width = spritesheet.width;
+        this.#sprite.height = spritesheet.height;
+        var offscreenCtx = this.#sprite.getContext('2d');
 
         offscreenCtx.save();
         offscreenCtx.drawImage(spritesheet, this.sx, this.sy, this.sw, this.sh, 0, 0, spritesheet.width, spritesheet.height);
         offscreenCtx.restore();
 
-        if (colors && !Drawable.palette[imagePath]) {
-            Drawable.palette[imagePath] = {};
-        }
     };
 
     tileCoord(tileX, tileY, level) {
@@ -295,19 +293,23 @@ class Drawable {
 
         var dimensions = this.drawSize(level);
 
-        var horizontalScale = dimensions[0] / this.sprite.width;
+        var horizontalScale = dimensions[0] / this.#sprite.width;
 
         var colorSettings = level.getColorSettings();
+
+        if (this.colors && !Drawable.palette[this.imagePath]) {
+            Drawable.palette[this.imagePath] = {};
+        }
         if (this.colors && !Drawable.palette[this.imagePath][JSON.stringify(this.colors)]) {
             // var newColor = getColor(grey, colorMode);  // Forces all to be grey
             var newColor = getColor(this.colors, colorSettings.colorMode);
 
-            Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.sprite);
+            Drawable.palette[this.imagePath][JSON.stringify(this.colors)] = copyCanvas(this.#sprite);
 
             replaceImageColor(Drawable.palette[this.imagePath][JSON.stringify(this.colors)], newColor, (colorSettings.pattern) ? this.colors : false, horizontalScale);
 
         }
-        var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.sprite;
+        var spriteToDraw = (this.colors) ? Drawable.palette[this.imagePath][JSON.stringify(this.colors)] : this.#sprite;
 
         ctx.drawImage(spriteToDraw, this.sx, this.sy, this.sw, this.sh, pixelCoor[0], pixelCoor[1], dimensions[0], dimensions[1]);
         // ctx.drawImage(this.spritesheet, 0, 0, 128, 97, x, y, width, height);

@@ -39,16 +39,16 @@ class GameEngine {
             var nextDirection = this.directionQueue.splice(0, 1)[0];
             switch (nextDirection) {
                 case "up":
-                    this.currentLevel.player.up();
+                    this.currentLevel.player.up(this.currentLevel);
                     break;
                 case "down":
-                    this.currentLevel.player.down();
+                    this.currentLevel.player.down(this.currentLevel);
                     break;
                 case "left":
-                    this.currentLevel.player.left();
+                    this.currentLevel.player.left(this.currentLevel);
                     break;
                 case "right":
-                    this.currentLevel.player.right();
+                    this.currentLevel.player.right(this.currentLevel);
                     break;
             }
         }

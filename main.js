@@ -1,4 +1,4 @@
-const classList = [];
+const classList = [Object, Array];
 
 var ASSET_MANAGER = new AssetManager();
 
@@ -25,23 +25,29 @@ ASSET_MANAGER.downloadAll(function () {
 	var gameEngine = new GameEngine();
 	gameEngine.init(ctx);
 
-	var colorSettings = new ColorSettings("traditional", false);
-	gameEngine.setColorSettings(colorSettings);
+	// var colorSettings = new ColorSettings("traditional", false);
+	// gameEngine.setColorSettings(colorSettings);
 
-	var tempLevel = new Level(colorSettings, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2);
-	tempLevel.addTile(0, 0, new Tile());
-	tempLevel.addTile(0, 1, new Tile());
-	tempLevel.addTile(0, -1, new Tile());
-	tempLevel.addTile(1, 0, new Tile());
-	tempLevel.addTile(-1, 0, new Tile());
-	tempLevel.addTile(-2, 0, new ColorPad(copy(red)));
-	tempLevel.addTile(0, -2, new ColorPad(copy(blue)));
-	tempLevel.addTile(2, 0, new ColorPad(copy(yellow)));
-	tempLevel.addTile(0, 2, new Finish(copy(brown)));
+	// var tempLevel = new Level(colorSettings, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2);
+	// tempLevel.addTile(0, 0, new Tile());
+	// tempLevel.addTile(0, 1, new Tile());
+	// tempLevel.addTile(0, -1, new Tile());
+	// tempLevel.addTile(1, 0, new Tile());
+	// tempLevel.addTile(-1, 0, new Tile());
+	// tempLevel.addTile(-2, 0, new ColorPad(copy(red)));
+	// tempLevel.addTile(0, -2, new ColorPad(copy(blue)));
+	// tempLevel.addTile(2, 0, new ColorPad(copy(yellow)));
+	// tempLevel.addTile(0, 2, new Finish(copy(brown)));
 
-	gameEngine.loadLevel(tempLevel);
+	// var out = jsonifyObject(tempLevel);
+	// download('tempLevel.json', JSON.stringify(out));
+	// var tempLevelClone = interpretJSON(JSON.parse(JSON.stringify(out)), createClassMap(classList));
 
-	gameEngine.start();
+	readJSONFile('C:/Users/spill/Documents/GitHub/TCSS491SoloMiniGame/tempLevel.json', function (text) {
+		var tempLevelClone = interpretJSON(JSON.parse(text), createClassMap(classList));
+		gameEngine.loadLevel(tempLevelClone);
+		gameEngine.start();
+	});
 });
 
 function copy(object) {  // Shorthand to copy an object
