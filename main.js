@@ -43,7 +43,10 @@ ASSET_MANAGER.downloadAll(function () {
 	// download('tempLevel.json', JSON.stringify(out));
 	// var tempLevelClone = interpretJSON(JSON.parse(JSON.stringify(out)), createClassMap(classList));
 
-	readJSONFile('C:/Users/spill/Documents/GitHub/TCSS491SoloMiniGame/tempLevel.json', function (text) {
+	var loc = window.location.pathname;
+	var dir = loc.substring(0, loc.lastIndexOf('/'));
+
+	readJSONFile(dir + '/tempLevel.json', function (text) {
 		var tempLevelClone = interpretJSON(JSON.parse(text), createClassMap(classList));
 		gameEngine.loadLevel(tempLevelClone);
 		gameEngine.start();
