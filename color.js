@@ -260,7 +260,7 @@ class ColorVennDiagram {
         this.__recursiveColorify(this.sprite,this.gameEngine.getColorSettings(), copy(grey), [...primaryColors], scale * DEFAULT_VENN_SCALE);
         ctx.drawImage(this.sprite, this.sx, this.sy, this.sw, this.sh, x, y, this.sprite.width * scale * DEFAULT_VENN_SCALE, this.sprite.height * scale * DEFAULT_VENN_SCALE);
         if (this.followColor) {
-            var colorName = getColorNameByColor(this.gameEngine.getLevel().player.colors);
+            var colorName = getColorNameByColor(this.gameEngine.getLevel().getPlayer().colors);
 
             var fileName = VENN_FILE_NAME.substring(0, VENN_FILE_NAME.length - 4) + "-" + colorName + ".png";
             var sprite = this.__getVennOverlay(fileName);

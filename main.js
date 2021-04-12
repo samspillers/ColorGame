@@ -22,13 +22,13 @@ ASSET_MANAGER.downloadAll(function () {
 	var canvas = document.getElementById('gameWorld');
 	var ctx = canvas.getContext('2d');
 
-	var gameEngine = new GameEngine();
+	var colorSettings = new ColorSettings("traditional", false);
+	var gameEngine = new GameEngine(colorSettings, 1024, 768, 100, Math.PI * 5 / 12, 1, 0.2, 2);
+	gameEngine.setColorSettings(colorSettings);
 	gameEngine.init(ctx);
 
-	// var colorSettings = new ColorSettings("traditional", false);
-	// gameEngine.setColorSettings(colorSettings);
 
-	// var tempLevel = new Level(colorSettings, 1024, 768, 50, Math.PI * 5 / 12, 1, 0.2, 2);
+	// var tempLevel = new Level();
 	// tempLevel.addTile(0, 0, new Tile());
 	// tempLevel.addTile(0, 1, new Tile());
 	// tempLevel.addTile(0, -1, new Tile());
@@ -43,6 +43,17 @@ ASSET_MANAGER.downloadAll(function () {
 	// download('tempLevel.json', JSON.stringify(out));
 	// var tempLevelClone = interpretJSON(JSON.parse(JSON.stringify(out)), createClassMap(classList));
 
+
+	// var tempPanel = new Panel(0, 0, 1000, 50, minInterElementSpacing = 2, false, true, true);
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+	// gameEngine.addPanel(tempPanel);
+	
 	var loc = window.location.pathname;
 	var dir = loc.substring(0, loc.lastIndexOf('/'));
 
@@ -51,6 +62,7 @@ ASSET_MANAGER.downloadAll(function () {
 		gameEngine.loadLevel(tempLevelClone);
 		gameEngine.start();
 	});
+	
 });
 
 function copy(object) {  // Shorthand to copy an object

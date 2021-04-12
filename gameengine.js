@@ -1,7 +1,8 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 class GameEngine {
-    constructor() {
+    constructor(colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio) {
+        Object.assign(this, { colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio });
         this.entities = [];
         this.showOutlines = false;
         this.ctx = null;
@@ -16,7 +17,15 @@ class GameEngine {
         this.board = new ColorVennDiagram(this, true);
         this.currentLevel = null;
 
+        this.panels = [];
+        this.editingPanels = [];
+        this.initializeEditingPanels();
+        this.editingMode = false;
     };
+
+    addPanel(panel) {
+        this.panels.push(panel);
+    }
 
     setColorSettings(colorSettings) {
         this.colorSettings = colorSettings;
@@ -24,6 +33,7 @@ class GameEngine {
 
     loadLevel(level) {
         this.currentLevel = level;
+        this.currentLevel.setGameSettings(this.colorSettings, this.total_width, this.total_height, this.border_size, this.tile_angle, this.diagonal_to_horizontal_ratio, this.bridge_to_tile_ratio, this.bridge_depth_to_bridge_width_ratio);
     } 
     
     getLevel() {
@@ -34,26 +44,35 @@ class GameEngine {
         return this.colorSettings;
     }
 
+    setEditingMode(b) {
+        this.editingMode = b;
+    }
+
     flushDirectionQueue() {
         while (this.directionQueue.length > 0) {
             var nextDirection = this.directionQueue.splice(0, 1)[0];
             switch (nextDirection) {
                 case "up":
-                    this.currentLevel.player.up(this.currentLevel);
+                    this.currentLevel.getPlayer().up(this.currentLevel);
                     break;
                 case "down":
-                    this.currentLevel.player.down(this.currentLevel);
+                    this.currentLevel.getPlayer().down(this.currentLevel);
                     break;
                 case "left":
-                    this.currentLevel.player.left(this.currentLevel);
+                    this.currentLevel.getPlayer().left(this.currentLevel);
                     break;
                 case "right":
-                    this.currentLevel.player.right(this.currentLevel);
+                    this.currentLevel.getPlayer().right(this.currentLevel);
                     break;
             }
         }
     }
 
+    handleClick(x, y) {
+        for (const panel of this.panels) {
+            panel.checkCollision(x, y);
+        }
+    }
 
     init(ctx) {
         this.ctx = ctx;
@@ -74,22 +93,24 @@ class GameEngine {
     startInput() {
         var that = this;
 
-        // var getXandY = function (e) {
-        //     var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
-        //     var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        var getXandY = function (e) {
+            var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+            var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
 
-        //     return { x: x, y: y };
-        // }
+            return [x, y];
+        }
 
         // this.ctx.canvas.addEventListener("mousemove", function (e) {
         //     //console.log(getXandY(e));
         //     that.mouse = getXandY(e);
         // }, false);
 
-        // this.ctx.canvas.addEventListener("click", function (e) {
-        //     //console.log(getXandY(e));
-        //     that.click = getXandY(e);
-        // }, false);
+        this.ctx.canvas.addEventListener("click", function (e) {
+            //console.log(getXandY(e));
+            var click = getXandY(e);
+            that.handleClick(click[0], click[1]);
+            
+        }, false);
 
         // this.ctx.canvas.addEventListener("wheel", function (e) {
         //     //console.log(getXandY(e));
@@ -137,6 +158,9 @@ class GameEngine {
         // }
         this.currentLevel.draw(this.ctx);
         this.board.draw(this.ctx, 0, 768 - this.board.sprite.height * DEFAULT_VENN_SCALE, 1);
+        for (const panel of this.panels) {
+            panel.draw(this.ctx);
+        }        
     };
 
     update() {
@@ -159,7 +183,19 @@ class GameEngine {
 
     loop() {
         this.clockTick = this.timer.tick();
-        this.update();
+        // this.update();  // Not needed (?)
         this.draw();
     };
+
+    initializeEditingPanels() {
+        var tempPanel = new Panel(0, 0, this.total_width, this.border_size * 0.9, 2, false, true, true);
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        tempPanel.addElement(new DrawableUIElement("./sprites/tile.png", 0, 0, 128, 97, 64, 48));
+        this.editingPanels.push(tempPanel);
+    }
 };

@@ -27,16 +27,44 @@ function getSortedFloatKeysOfArray(array) {
 }
 
 class Level {
-    constructor(colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio) {
-        Object.assign(this, { colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio });
+    #colorSettings;
+    #total_width;
+    #total_height;
+    #border_size;
+    #tile_angle;
+    #diagonal_to_horizontal_ratio;
+    #bridge_to_tile_ratio;
+    #bridge_depth_to_bridge_width_ratio;
+    #player;
+    #xMax;
+    #xMin;
+    #yMax;
+    #yMin;
+    #tileWidth;
+    #tileHeight;
+    #tileHorizontalOverhang;
+    #xCenterOffset;
+    #yCenterOffset;
 
+    constructor() {
         this.tiles = {};
         this.bridges = {};
 
-        this.player = new Player(this);
-        this.player.x = 0;
-        this.player.y = 0;
+        this.#player = new Player(this);
+        this.#player.x = 0;
+        this.#player.y = 0;
     };
+
+    setGameSettings(colorSettings, total_width, total_height, border_size, tile_angle, diagonal_to_horizontal_ratio, bridge_to_tile_ratio, bridge_depth_to_bridge_width_ratio) {
+        this.#colorSettings = colorSettings;
+        this.#total_width = total_width;
+        this.#total_height = total_height;
+        this.#border_size = border_size;
+        this.#tile_angle = tile_angle;
+        this.#diagonal_to_horizontal_ratio = diagonal_to_horizontal_ratio;
+        this.#bridge_to_tile_ratio = bridge_to_tile_ratio;
+        this.#bridge_depth_to_bridge_width_ratio = bridge_depth_to_bridge_width_ratio;
+    }
 
     // beginLevel(startX, startY) {
     //     this.player.moveToLocation(startX, startY);
@@ -96,69 +124,73 @@ class Level {
     }
 
     getXMin() {
-        if (!this.xMin) {
+        if (!this.#xMin) {
             this.__bakePixelSizing();
         }
-        return this.xMin;
+        return this.#xMin;
     }
 
     getYMin() {
-        if (!this.yMin) {
+        if (!this.#yMin) {
             this.__bakePixelSizing();
         }
-        return this.yMin;
+        return this.#yMin;
     }
     getBorder_size() {
-        if (!this.border_size) {
+        if (!this.#border_size) {
             this.__bakePixelSizing();
         }
-        return this.border_size;
+        return this.#border_size;
     }
     getBridge_to_tile_ratio() {
-        if (!this.bridge_to_tile_ratio) {
+        if (!this.#bridge_to_tile_ratio) {
             this.__bakePixelSizing();
         }
-        return this.bridge_to_tile_ratio;
+        return this.#bridge_to_tile_ratio;
     }
     getXCenterOffset() {
-        if (!this.xCenterOffset) {
+        if (!this.#xCenterOffset) {
             this.__bakePixelSizing();
         }
-        return this.xCenterOffset;
+        return this.#xCenterOffset;
     }
     getTileWidth() {
-        if (!this.tileWidth) {
+        if (!this.#tileWidth) {
             this.__bakePixelSizing();
         }
-        return this.tileWidth;
+        return this.#tileWidth;
     }
     getYMax() {
-        if (!this.yMax) {
+        if (!this.#yMax) {
             this.__bakePixelSizing();
         }
-        return this.yMax;
+        return this.#yMax;
     }
     getTileHorizontalOverhang() {
-        if (!this.tileHorizontalOverhang) {
+        if (!this.#tileHorizontalOverhang) {
             this.__bakePixelSizing();
         }
-        return this.tileHorizontalOverhang;
+        return this.#tileHorizontalOverhang;
     }
     getYCenterOffset() {
-        if (!this.yCenterOffset) {
+        if (!this.#yCenterOffset) {
             this.__bakePixelSizing();
         }
-        return this.yCenterOffset;
+        return this.#yCenterOffset;
     }
     getTileHeight() {
-        if (!this.tileHeight) {
+        if (!this.#tileHeight) {
             this.__bakePixelSizing();
         }
-        return this.tileHeight;
+        return this.#tileHeight;
     }
 
     getColorSettings() {
-        return this.colorSettings;
+        return this.#colorSettings;
+    }
+
+    getPlayer() {
+        return this.#player;
     }
 
     __bakePixelSizing() {
@@ -176,25 +208,25 @@ class Level {
                 yMax = currYMax;
             }
         }
-        this.xMax = xMax;
-        this.xMin = xMin;
-        this.yMax = yMax;
-        this.yMin = yMin;
-        var tilesWide = this.xMax - this.xMin + 1;
-        var tilesHigh = this.yMax - this.yMin + 1;
+        this.#xMax = xMax;
+        this.#xMin = xMin;
+        this.#yMax = yMax;
+        this.#yMin = yMin;
+        var tilesWide = this.#xMax - this.#xMin + 1;
+        var tilesHigh = this.#yMax - this.#yMin + 1;
 
         // Find maximum possible tile size that could fit the number of tiles needed
-        var usuableWidth = this.total_width - this.border_size * 2;
-        var usuableHeight = this.total_height - this.border_size * 2;
+        var usuableWidth = this.#total_width - this.#border_size * 2;
+        var usuableHeight = this.#total_height - this.#border_size * 2;
         
         // overhang tile width to horizontal tile width ratio
-        var othr = this.diagonal_to_horizontal_ratio * Math.cos(this.tile_angle);
+        var othr = this.#diagonal_to_horizontal_ratio * Math.cos(this.#tile_angle);
         // vertical tile height to horizontal tile height ratio
-        var vthr = this.diagonal_to_horizontal_ratio * Math.sin(this.tile_angle);
+        var vthr = this.#diagonal_to_horizontal_ratio * Math.sin(this.#tile_angle);
 
-        var tileWidthsWide = (tilesWide + (tilesWide - 1) * this.bridge_to_tile_ratio
-        + tilesHigh * othr + (tilesHigh - 1) * this.bridge_to_tile_ratio * othr);
-        var tileheightsTall = (tilesHigh * vthr + (tilesHigh - 1) * vthr * this.bridge_to_tile_ratio);
+        var tileWidthsWide = (tilesWide + (tilesWide - 1) * this.#bridge_to_tile_ratio
+        + tilesHigh * othr + (tilesHigh - 1) * this.#bridge_to_tile_ratio * othr);
+        var tileheightsTall = (tilesHigh * vthr + (tilesHigh - 1) * vthr * this.#bridge_to_tile_ratio);
         var maxWidthHortizontal = usuableWidth / tileWidthsWide
         var maxWidthVertical = usuableHeight / tileheightsTall
 
@@ -204,17 +236,17 @@ class Level {
         var usedWidth = tileSize * tileWidthsWide
         var usedHeight = tileSize * tileheightsTall
 
-        this.tileWidth = tileSize;
-        this.tileHeight = tileSize * vthr;
-        this.tileHorizontalOverhang = tileSize * othr;
-        this.xCenterOffset = (usuableWidth - usedWidth) / 2
-        this.yCenterOffset = (usuableHeight - usedHeight) / 2
+        this.#tileWidth = tileSize;
+        this.#tileHeight = tileSize * vthr;
+        this.#tileHorizontalOverhang = tileSize * othr;
+        this.#xCenterOffset = (usuableWidth - usedWidth) / 2
+        this.#yCenterOffset = (usuableHeight - usedHeight) / 2
 
     }
 
     // tile_angle should be in radians
     draw(ctx) {
-        if (!this.xMax || !this.xMin || !this.yMax || !this.yMin || !this.tileWidth || !this.tileHeight || !this.xCenterOffset || !this.yCenterOffset || !this.tileHorizontalOverhang) {
+        if (!this.#xMax || !this.#xMin || !this.#yMax || !this.#yMin || !this.#tileWidth || !this.#tileHeight || !this.#xCenterOffset || !this.#yCenterOffset || !this.#tileHorizontalOverhang) {
             this.__bakePixelSizing();
         }
 
@@ -242,7 +274,7 @@ class Level {
             }
         }
 
-        this.player.draw(ctx, this, this.player.x, this.player.y);
+        this.#player.draw(ctx, this, this.#player.x, this.#player.y);
     }
 
     update() {}
